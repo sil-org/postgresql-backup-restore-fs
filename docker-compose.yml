@@ -1,0 +1,54 @@
+version: '2'
+services:
+    data:
+        image: silintl/data-volume:latest
+        volumes:
+          - ./application:/data
+          - ./mybackups:/backup
+
+    # See https://hub.docker.com/_/postgres/ for details of the postgres image.
+    # POSTGRES_PASSWORD - superuser password for PostgreSQL
+    # POSTGRES_USER - superuser (default is 'postgres')
+    # POSTGRES_DB - name of default database (default is value of POSTGRES_USER)
+    db:
+        image: postgres:11.15-alpine3.15
+        volumes_from:
+            - data
+        ports:
+            - "5432"
+        environment:
+            POSTGRES_PASSWORD: r00tp@ss!
+
+    # DB_HOST - hostname of the database server
+    # DB_ROOTUSER - administrative user for the database server
+    # DB_ROOTPASSWORD - password for the DB_ROOTUSER
+    # DB_USER - user that accesses the database
+    # DB_USERPASSWORD - password for the DB_USER
+    # DB_NAME - name of database to back up/restore
+    restore:
+        build: ./
+        volumes_from:
+            - data
+        environment:
+            DB_HOST: db
+            DB_ROOTUSER: postgres
+            DB_ROOTPASSWORD: r00tp@ss!
+            DB_USER: dbuser
+            DB_USERPASSWORD: dbuserpass
+            DB_NAME: world
+            BACKUP_DIR: /backup
+            MODE: restore
+
+    backup:
+        build: ./
+        volumes_from:
+            - data
+        environment:
+            DB_HOST: db
+            DB_ROOTUSER: postgres
+            DB_ROOTPASSWORD: r00tp@ss!
+            DB_USER: dbuser
+            DB_USERPASSWORD: dbuserpass
+            DB_NAME: world
+            BACKUP_DIR: /backup
+            MODE: backup
