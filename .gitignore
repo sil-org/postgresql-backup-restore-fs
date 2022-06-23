@@ -1,0 +1,7 @@
+# local config files
+aws.env
+local.env
+
+*.aes
+
+dockercfg
