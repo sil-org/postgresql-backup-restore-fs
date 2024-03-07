@@ -1,5 +1,0 @@
-app:
-  build:
-    image: silintl/postgresql-backup-restore-fs
-    dockerfile: ./Dockerfile
-  cached: true
