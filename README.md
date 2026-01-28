@@ -27,8 +27,8 @@ Service to backup and/or restore a PostgreSQL database to/from a local filesyste
 
 >**Versioning of the backup file is left as an exercise for the user.  This script will overwrite an existing backup file.**
 
-## Docker Hub
-This image is built automatically on Docker Hub as [silintl/postgresql-backup-restore-fs](https://hub.docker.com/r/silintl/postgresql-backup-restore-fs/)
+## Docker
+This image is built automatically to GitHub Packages (GHCR)
 
 ## Playing with it locally
 You'll need [Docker](https://www.docker.com/get-docker), [Docker Compose](https://docs.docker.com/compose/install/), and [Make](https://www.gnu.org/software/make/).
