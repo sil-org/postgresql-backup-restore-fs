@@ -2,6 +2,8 @@
 
 MYNAME="postgresql-backup-restore-fs"
 
+. /data/lib/sentry.sh
+
 # hostname:port:database:username:password
 echo ${DB_HOST}:*:*:${DB_USER}:${DB_USERPASSWORD}      > /root/.pgpass
 echo ${DB_HOST}:*:*:${DB_ROOTUSER}:${DB_ROOTPASSWORD} >> /root/.pgpass
@@ -14,8 +16,7 @@ case "${MODE}" in
         /data/${MODE}.sh || STATUS=$?
         ;;
     *)
-        echo ${MYNAME}: FATAL: Unknown MODE: ${MODE}
-        exit 1
+        fatal "Unknown MODE: ${MODE}" 1
 esac
 
 if [ $STATUS -ne 0 ]; then
