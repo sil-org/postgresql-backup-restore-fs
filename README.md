@@ -25,6 +25,8 @@ Service to backup and/or restore a PostgreSQL database to/from a local filesyste
 
 `BACKUP_DIR` e.g., _/path/to/database-backups_ **NOTE: no trailing slash**
 
+`SENTRY_DSN` (optional) Sentry DSN for error reporting, e.g., _https://key@o0.ingest.sentry.io/0_. When set, every fatal backup or restore error is sent to Sentry, tagged with the database name and exit status. Password values are removed from messages before sending. When not set, errors are only written to the container log.
+
 ### Encryption in transit (optional)
 The image includes the [AWS RDS CA bundle](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html) for all regions at `/etc/ssl/rds-ca-bundle.pem`. To require TLS and verify the database server's certificate, set these standard PostgreSQL environment variables:
 

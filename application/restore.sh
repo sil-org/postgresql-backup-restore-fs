@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
 MYNAME="postgresql-backup-restore-fs"
+
+. /data/lib/sentry.sh
+
 STATUS=0
 
 echo "${MYNAME}: restore: Started"
@@ -13,6 +16,7 @@ if [ -z "${result}" ]; then
     if [ "${result}" != "CREATE ROLE" ]; then
         message="Create role command failed: ${result}"
         echo "${MYNAME}: FATAL: ${message}"
+        error_to_sentry "${message}" "${DB_NAME}" "1"
         exit 1
     fi
 fi
@@ -35,6 +39,7 @@ else
     if [ "${result}" != "DROP DATABASE" ]; then
         message="Drop database command failed: ${result}"
         echo "${MYNAME}: FATAL: ${message}"
+        error_to_sentry "${message}" "${DB_NAME}" "1"
         exit 1
     fi
 fi
@@ -45,7 +50,9 @@ cp ${BACKUP_DIR}/${DB_NAME}.sql.gz /tmp/${DB_NAME}.sql.gz || STATUS=$?
 end=$(date +%s)
 
 if [ $STATUS -ne 0 ]; then
-    echo "${MYNAME}: FATAL: Copy backup of ${DB_NAME} from ${BACKUP_DIR} returned non-zero status ($STATUS) in $(expr ${end} - ${start}) seconds."
+    message="Copy backup of ${DB_NAME} from ${BACKUP_DIR} returned non-zero status ($STATUS) in $(expr ${end} - ${start}) seconds."
+    echo "${MYNAME}: FATAL: ${message}"
+    error_to_sentry "${message}" "${DB_NAME}" "${STATUS}"
     exit $STATUS
 else
     echo "${MYNAME}: Copy backup of ${DB_NAME} from ${BACKUP_DIR} completed in $(expr ${end} - ${start}) seconds."
@@ -57,7 +64,9 @@ gunzip -f /tmp/${DB_NAME}.sql.gz || STATUS=$?
 end=$(date +%s)
 
 if [ $STATUS -ne 0 ]; then
-    echo "${MYNAME}: FATAL: Decompressing backup of ${DB_NAME} returned non-zero status ($STATUS) in $(expr ${end} - ${start}) seconds."
+    message="Decompressing backup of ${DB_NAME} returned non-zero status ($STATUS) in $(expr ${end} - ${start}) seconds."
+    echo "${MYNAME}: FATAL: ${message}"
+    error_to_sentry "${message}" "${DB_NAME}" "${STATUS}"
     exit $STATUS
 else
     echo "${MYNAME}: Decompressing backup of ${DB_NAME} completed in $(expr ${end} - ${start}) seconds."
@@ -69,7 +78,9 @@ psql --host=${DB_HOST} --username=${DB_ROOTUSER} --dbname=postgres ${DB_OPTIONS}
 end=$(date +%s)
 
 if [ $STATUS -ne 0 ]; then
-    echo "${MYNAME}: FATAL: Restore of ${DB_NAME} returned non-zero status ($STATUS) in $(expr ${end} - ${start}) seconds."
+    message="Restore of ${DB_NAME} returned non-zero status ($STATUS) in $(expr ${end} - ${start}) seconds."
+    echo "${MYNAME}: FATAL: ${message}"
+    error_to_sentry "${message}" "${DB_NAME}" "${STATUS}"
     exit $STATUS
 else
     echo "${MYNAME}: Restore of ${DB_NAME} completed in $(expr ${end} - ${start}) seconds."
