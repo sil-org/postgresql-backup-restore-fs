@@ -16,9 +16,7 @@ case "${MODE}" in
         /data/${MODE}.sh || STATUS=$?
         ;;
     *)
-        echo ${MYNAME}: FATAL: Unknown MODE: ${MODE}
-        error_to_sentry "Unknown MODE: ${MODE}" "${DB_NAME}" "1"
-        exit 1
+        fatal "Unknown MODE: ${MODE}" 1
 esac
 
 if [ $STATUS -ne 0 ]; then

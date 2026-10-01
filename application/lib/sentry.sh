@@ -45,3 +45,11 @@ error_to_sentry() {
 
     return 0
 }
+
+# Log a fatal error, report it to Sentry, and exit.
+# Usage: fatal "error message" exit_code
+fatal() {
+    echo "${MYNAME}: FATAL: $1"
+    error_to_sentry "$1" "${DB_NAME}" "$2"
+    exit "$2"
+}
