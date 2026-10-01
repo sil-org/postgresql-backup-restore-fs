@@ -25,6 +25,15 @@ Service to backup and/or restore a PostgreSQL database to/from a local filesyste
 
 `BACKUP_DIR` e.g., _/path/to/database-backups_ **NOTE: no trailing slash**
 
+### Encryption in transit (optional)
+The image includes the [AWS RDS CA bundle](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html) for all regions at `/etc/ssl/rds-ca-bundle.pem`. To require TLS and verify the database server's certificate, set these standard PostgreSQL environment variables:
+
+`PGSSLMODE` set to `verify-full`
+
+`PGSSLROOTCERT` set to `/etc/ssl/rds-ca-bundle.pem`
+
+If these are not set, the connection behaves as before (`sslmode=prefer`, no certificate verification).
+
 >**Versioning of the backup file is left as an exercise for the user.  This script will overwrite an existing backup file.**
 
 ## Docker
